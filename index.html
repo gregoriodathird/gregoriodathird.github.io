@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -1350,49 +1350,53 @@
   function drawCustomer(slot) {
     var c = slot.customer;
     if (!c) return;
-    var pal = CUSTOMER_PALETTES[c.variant];
+
     var cx = slot.x, cy = 30;
     var ratio = c.patience / c.maxPatience;
+    var color = (c.variant % 2 === 0) ? palette.teal : palette.coral;
 
+    // Customers use the EXACT same character body as the cooks,
+    // but without the chef hat. No separate customer face/hair style.
     ctx.save();
     ctx.translate(cx, cy);
 
-    // body/head, same single-circle build as the players
-    ctx.beginPath(); ctx.arc(0, 0, PLAYER_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = pal.shirt;
+    // Same feet as the cooks.
+    ctx.fillStyle = "#3A3A3A";
+    ctx.fillRect(-5, 4, 4, 3);
+    ctx.fillRect(1, 4, 4, 3);
+
+    // Same round body as the cooks.
+    ctx.beginPath();
+    ctx.arc(0, 0, PLAYER_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = color;
     ctx.fill();
 
-    // hair cap instead of a chef hat
-    ctx.fillStyle = pal.hair;
-    ctx.beginPath(); ctx.arc(0, -1, PLAYER_RADIUS, Math.PI, 0);
-    ctx.closePath();
-    ctx.fill();
+    // Same body shading as the cooks.
+    ctx.fillStyle = "rgba(0,0,0,0.12)";
+    ctx.fillRect(2, -1, 4, 5);
 
-    // eyes
+    // Same eyes.
     ctx.fillStyle = "#2A2A2A";
     ctx.fillRect(-3, -2, 2, 2);
     ctx.fillRect(1, -2, 2, 2);
 
-    // rosy cheeks, matching the players
+    // Same cheeks.
     ctx.fillStyle = "rgba(255,120,120,0.35)";
     ctx.beginPath(); ctx.arc(-4, 1, 1.5, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(4, 1, 1.5, 0, Math.PI * 2); ctx.fill();
 
-    // mouth reflects patience: smile when relaxed, flat line when getting worried
-    ctx.strokeStyle = "#2A2A2A"; ctx.lineWidth = 1;
-    ctx.beginPath();
-    if (ratio > 0.4) ctx.arc(0, 2, 2.5, 0.15 * Math.PI, 0.85 * Math.PI);
-    else { ctx.moveTo(-3, 3.5); ctx.lineTo(3, 3.5); }
-    ctx.stroke();
-
+    // No chef hat here — this is the only visual difference from the cooks.
     ctx.restore();
 
+    // Keep their food order and patience indicator.
     drawOrderBubble(c.recipe, cx, cy - 12);
 
     var barW = 34, barX = cx - barW / 2, barY = cy + 13;
-    ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.fillRect(barX, barY, barW, 4);
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(barX, barY, barW, 4);
     var col = ratio > 0.5 ? "#6FAE3E" : (ratio > 0.22 ? "#F6C445" : "#E4483B");
-    ctx.fillStyle = col; ctx.fillRect(barX, barY, barW * Math.max(0, ratio), 4);
+    ctx.fillStyle = col;
+    ctx.fillRect(barX, barY, barW * Math.max(0, ratio), 4);
   }
 
   function drawHeldItem(player, worldX, worldY) {
